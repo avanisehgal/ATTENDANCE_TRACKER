@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B.Tech Attendance Tracker</title>
+    <meta name="description"
+        content="Professional attendance tracking system for B.Tech students with weekly view and analytics.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1 class="app-title">B.Tech Attendance Tracker</h1>
+                    <div class="semester-selector">
+                        <label for="semesterSelect">Semester:</label>
+                        <select id="semesterSelect" class="semester-select">
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                </div>
+                <nav class="header-nav">
+                    <button class="nav-btn active" data-view="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="nav-btn" data-view="weekly">
+                        <span class="nav-icon">📅</span>
+                        <span>Weekly</span>
+                    </button>
+                    <button class="nav-btn" data-view="monthly">
+                        <span class="nav-icon">📆</span>
+                        <span>Monthly</span>
+                    </button>
+                    <button class="nav-btn" data-view="subjects">
+                        <span class="nav-icon">📚</span>
+                        <span>Subjects</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="app-main">
+        <div class="container">
+
+            <!-- Dashboard View -->
+            <div id="dashboardView" class="view active">
+                <div class="view-title">
+                    <h2>Dashboard Overview</h2>
+                    <p class="view-subtitle">Track your attendance performance</p>
+                </div>
+
+                <!-- Overall Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-icon">📈</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Overall Attendance</div>
+                            <div class="stat-value" id="overallPercentage">0%</div>
+                        </div>
+                    </div>
+                    <div class="stat-card success">
+                        <div class="stat-icon">✓</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Classes Attended</div>
+                            <div class="stat-value" id="totalAttended">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-icon">✗</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Classes Missed</div>
+                            <div class="stat-value" id="totalMissed">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card info">
+                        <div class="stat-icon">📖</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Total Subjects</div>
+                            <div class="stat-value" id="totalSubjects">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject-wise Performance -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Subject-wise Performance</h3>
+                        <button class="btn btn-primary" onclick="showView('subjects')">+ Add Subject</button>
+                    </div>
+                    <div id="subjectPerformance" class="subject-performance-list"></div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-card" onclick="showView('weekly')">
+                            <span class="action-icon">📅</span>
+                            <div class="action-content">
+                                <div class="action-title">Mark Weekly Attendance</div>
+                                <div class="action-desc">Track attendance for the entire week</div>
+                            </div>
+                        </button>
+                        <button class="action-card" onclick="showView('subjects')">
+                            <span class="action-icon">📚</span>
+                            <div class="action-content">
+                                <div class="action-title">Manage Subjects</div>
+                                <div class="action-desc">Add, edit, or remove subjects</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly View -->
+            <div id="monthlyView" class="view">
+                <div class="view-title">
+                    <h2>Monthly Attendance</h2>
+                    <p class="view-subtitle">View and track attendance for the entire month</p>
+                </div>
+
+                <!-- Month Navigator -->
+                <div class="week-navigator">
+                    <button class="btn btn-secondary" id="prevMonthBtn">
+                        <span>←</span> Previous Month
+                    </button>
+                    <div class="week-info">
+                        <div class="week-label">Viewing</div>
+                        <div class="week-range" id="monthRange">January 2026</div>
+                    </div>
+                    <button class="btn btn-secondary" id="nextMonthBtn">
+                        Next Month <span>→</span>
+                    </button>
+                </div>
+
+                <button class="btn btn-outline current-week-btn" id="currentMonthBtn">Jump to Current Month</button>
+
+                <!-- Monthly Attendance Grid -->
+                <div class="attendance-grid-container">
+                    <div id="monthlyGrid" class="monthly-grid"></div>
+                </div>
+
+                <!-- Month Summary -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>This Month's Summary</h3>
+                    </div>
+
+                    <!-- Overall Month Stats -->
+                    <div class="week-overall-stats">
+                        <div class="week-stat-card">
+                            <div class="week-stat-label">Total Attended</div>
+                            <div class="week-stat-value" id="monthTotalAttended">0</div>
+                        </div>
+                        <div class="week-stat-card">
+                            <div class="week-stat-label">Total Missed</div>
+                            <div class="week-stat-value" id="monthTotalMissed">0</div>
+                        </div>
+                        <div class="week-stat-card">
+                            <div class="week-stat-label">Month Percentage</div>
+                            <div class="week-stat-value" id="monthPercentage">0%</div>
+                        </div>
+                    </div>
+
+                    <div id="monthSummary" class="week-summary"></div>
+                </div>
+            </div>
+
+            <!-- Weekly View -->
+            <div id="weeklyView" class="view">
+                <div class="view-title">
+                    <h2>Weekly Attendance</h2>
+                    <p class="view-subtitle">Mark attendance for the entire week at once</p>
+                </div>
+
+                <!-- Week Navigator -->
+                <div class="week-navigator">
+                    <button class="btn btn-secondary" id="prevWeekBtn">
+                        <span>←</span> Previous Week
+                    </button>
+                    <div class="week-info">
+                        <div class="week-label">Week of</div>
+                        <div class="week-range" id="weekRange">Jan 20 - Jan 26, 2026</div>
+                    </div>
+                    <button class="btn btn-secondary" id="nextWeekBtn">
+                        Next Week <span>→</span>
+                    </button>
+                </div>
+
+                <button class="btn btn-outline current-week-btn" id="currentWeekBtn">Jump to Current Week</button>
+
+                <!-- Weekly Attendance Grid -->
+                <div class="attendance-grid-container">
+                    <div id="attendanceGrid" class="attendance-grid"></div>
+                </div>
+
+                <!-- Week Summary -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>This Week's Summary</h3>
+                    </div>
+
+                    <!-- Overall Week Stats -->
+                    <div class="week-overall-stats">
+                        <div class="week-stat-card">
+                            <div class="week-stat-label">Total Attended</div>
+                            <div class="week-stat-value" id="weekTotalAttended">0</div>
+                        </div>
+                        <div class="week-stat-card">
+                            <div class="week-stat-label">Total Missed</div>
+                            <div class="week-stat-value" id="weekTotalMissed">0</div>
+                        </div>
+                        <div class="week-stat-card">
+                            <div class="week-stat-label">Week Percentage</div>
+                            <div class="week-stat-value" id="weekPercentage">0%</div>
+                        </div>
+                    </div>
+
+                    <div id="weekSummary" class="week-summary"></div>
+                </div>
+            </div>
+
+            <!-- Subjects Management View -->
+            <div id="subjectsView" class="view">
+                <div class="view-title">
+                    <h2>Manage Subjects</h2>
+                    <p class="view-subtitle">Add and organize your subjects for the current semester</p>
+                </div>
+
+                <!-- Add Subject Form -->
+                <div class="add-subject-form">
+                    <div class="form-group">
+                        <label for="subjectNameInput">Subject Name</label>
+                        <input type="text" id="subjectNameInput" class="form-input"
+                            placeholder="e.g., Data Structures, Computer Networks">
+                    </div>
+                    <div class="form-group">
+                        <label for="subjectCodeInput">Subject Code (Optional)</label>
+                        <input type="text" id="subjectCodeInput" class="form-input" placeholder="e.g., CS201">
+                    </div>
+                    <button class="btn btn-primary" id="addSubjectBtn">
+                        <span>+</span> Add Subject
+                    </button>
+                </div>
+
+                <!-- Subjects List -->
+                <div class="section">
+                    <div class="section-header">
+                        <h3>Your Subjects</h3>
+                        <span class="subject-count" id="subjectCount">0 subjects</span>
+                    </div>
+                    <div id="subjectsList" class="subjects-grid"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Note Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-overlay" onclick="closeNoteModal()"></div>
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>Add Note</h3>
+                <button class="modal-close" onclick="closeNoteModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-subject-info" id="modalSubjectInfo"></p>
+                <div class="form-group">
+                    <label for="absenceNote">Add a note</label>
+                    <textarea id="absenceNote" class="form-input" rows="4"
+                        placeholder="Add a note for this class (e.g., reason for absence, important topic covered, etc.)..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeNoteModal()">Cancel</button>
+                <button class="btn btn-primary" id="saveNoteBtn">Save Note</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
