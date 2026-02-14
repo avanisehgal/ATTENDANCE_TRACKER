@@ -287,8 +287,21 @@ function saveNote(subjectId, date, note) {
 // Analytics & Calculations
 // ========================================
 
+// Helper function to check if a subject is a lab
+function isLabSubject(subjectId) {
+    const semesterData = getCurrentSemesterData();
+    const subject = semesterData.subjects.find(s => s.id === subjectId);
+    return subject && subject.name.toUpperCase().includes('LAB');
+}
+
+// Get weight multiplier for a subject (2 for labs, 1 for regular)
+function getSubjectWeight(subjectId) {
+    return isLabSubject(subjectId) ? 2 : 1;
+}
+
 function calculateSubjectStats(subjectId, excludeHolidays = true) {
     const semesterData = getCurrentSemesterData();
+    const weight = getSubjectWeight(subjectId);
     let attended = 0;
     let total = 0;
 
@@ -299,9 +312,9 @@ function calculateSubjectStats(subjectId, excludeHolidays = true) {
         }
 
         if (semesterData.attendance[dateStr][subjectId]) {
-            total++;
+            total += weight;
             if (semesterData.attendance[dateStr][subjectId].attended) {
-                attended++;
+                attended += weight;
             }
         }
     });
@@ -349,8 +362,9 @@ function calculatePeriodStats(dates) {
         semesterData.subjects.forEach(subject => {
             const attendance = getAttendance(subject.id, date);
             if (attendance) {
-                if (attendance.attended) totalAttended++;
-                else totalMissed++;
+                const weight = getSubjectWeight(subject.id);
+                if (attendance.attended) totalAttended += weight;
+                else totalMissed += weight;
             }
         });
     });
